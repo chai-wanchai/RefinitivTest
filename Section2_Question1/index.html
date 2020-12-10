@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Question 1</title>
+</head>
+<style>
+	.col-1 {
+		width: 200px;
+	}
+
+	.col-2 {
+		min-width: 100px;
+		width:  calc(100% - 500px);
+	}
+
+	.col-3 {
+		width: 300px;
+	}
+
+	.row {
+		display: flex;
+		height: 50vh;
+	}
+
+	@media only screen and (max-width: 600px) {
+		body {
+			overflow: scroll;
+		}
+	}
+</style>
+<script>
+	function isPrimeNumber(num) {
+		for (var i = 2; i < num; i++)
+			if (num % i === 0) return false;
+		return num > 1;
+	}
+	function isSquare(n) {
+		return n > 0 && Math.sqrt(n) % 1 === 0;
+	};
+	function isFibonacci(num) {
+		// numberToCheck is Fibinacci if one of 5*n*n + 4 or 5*n*n - 4 or both
+		// is a perferct square
+		if (isSquare(5 * (num * num) - 4) || isSquare(5 * (num * num) + 4)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	function onChange() {
+		const input = document.getElementById('number-col1')
+		const dropdown = document.getElementById('dropdown-select')
+		const answer = document.getElementById('answer')
+		let num = input.value
+		if (num) {
+			num = Math.round(num)
+			if (num <= 0) {
+				num = 1
+			}
+			let ans = false
+			if (dropdown.value === 'isPrime') {
+				ans = isPrimeNumber(num)
+			} else {
+				ans = isFibonacci(num)
+			}
+			input.value = num
+			answer.innerHTML = ans
+		} else {
+			answer.innerHTML = false
+		}
+
+	}
+</script>
+
+<body>
+	<div class="row">
+		<div class="col-1">
+			<input type="number" id="number-col1" name="number-col1" onchange="onChange()" onkeyup="onChange()" />
+		</div>
+		<div class="col-2">
+			<select id="dropdown-select" value="isPrime" name="dropdown-select" onchange="onChange()">
+				<option value="isPrime">isPrime</option>
+				<option value="isFibonacci">isFibonacci</option>
+			</select>
+		</div>
+		<div class="col-3">
+			<span id="answer">false</span>
+		</div>
+	</div>
+
+</body>
+
+</html>

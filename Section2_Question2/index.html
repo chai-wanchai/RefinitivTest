@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Question 2</title>
+</head>
+<style>
+	table {
+		margin: 1rem;
+		border-collapse: collapse;
+	}
+
+	input {
+		margin: 1rem;
+	}
+
+	table,
+	td,
+	th {
+		padding: 1rem;
+		border: 1px solid black;
+	}
+</style>
+<script>
+	let data = []
+	async function getData() {
+		const result = await fetch('https://api.publicapis.org/categories')
+		return result.json()
+	}
+	function renderItem(data) {
+		const table = document.getElementById("table-categories");
+		table.innerHTML = "";
+		data.forEach((element, i) => {
+			const row = table.insertRow(i)
+			const cell = row.insertCell(0)
+			cell.innerHTML = element
+		});
+	}
+	function filterData() {
+		const filter = document.getElementById('filter-input').value
+		const filterData = data.filter(item => {
+			if (item.toLowerCase().search(filter.toLowerCase()) > -1) {
+				return true
+			} else {
+				return false
+			}
+		})
+		renderItem(filterData)
+	}
+	document.addEventListener("DOMContentLoaded", async (event) => {
+		data = await getData()
+		renderItem(data)
+	});
+
+</script>
+
+<body>
+	<input onchange="filterData()" onkeyup="filterData()" id="filter-input" />
+	<table id="table-categories"></table>
+</body>
+
+</html>
