@@ -25,6 +25,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install  
-      working-directory: \Section2_Question5
+      working-directory: ./Section2_Question5
     - run: npm run build
-      working-directory: \Section2_Question5
+      working-directory: ./Section2_Question5
