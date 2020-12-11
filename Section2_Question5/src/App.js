@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import config from './config'
 const App = () => {
+	const refFile = useRef(null)
 	const [numberData, setNumberData] = useState({
 		a: '',
 		b: ''
@@ -62,14 +63,14 @@ const App = () => {
 		}
 	}
 	const getResult = () => {
-		if (!numberData.a || !numberData.b) {
+		if (!numberData.a || !numberData.b || operator.value === '') {
 			return
 		}
 		const eq = `${numberData.a}${operator.value}${numberData.b}`
 		const answer = eval(eq)
 		setAns({ value: answer, eq: eq })
 	}
-	const saveResult = () => {
+	const saveResult = async () => {
 		const result = {
 			a: numberData.a,
 			b: numberData.b,
@@ -77,11 +78,43 @@ const App = () => {
 			eq: ans.eq,
 			ans: ans.value
 		}
-		toCloud(result)
-		getFromCloud()
+		if (cloud) {
+			toCloud(result)
+		} else {
+			const url = window.URL.createObjectURL(new Blob([JSON.stringify(result)]))
+			const a = document.createElement('a')
+			a.href = url;
+			a.download = 'result.json'
+			document.body.appendChild(a);
+			a.click();
+		}
 	}
 	const loadResult = async () => {
-		const data = await getFromCloud()
+		let data = null
+		if (cloud) {
+			data = await getFromCloud()
+			checkDataToApp(data)
+		} else {
+			refFile.current.click()
+		}
+	}
+	const onUploadFile = (e) => {
+		e.preventDefault();
+		const file = e.target.files[0]
+		if (file) {
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				try {
+					const data = JSON.parse(event.target.result.toString())
+					checkDataToApp(data)
+				} catch (error) {
+					alert('Invalid Format')
+				}
+			};
+			reader.readAsText(file)
+		}
+	}
+	const checkDataToApp = (data) => {
 		if ('a' in data && 'b' in data) {
 			setNumberData({
 				a: data.a,
@@ -120,28 +153,31 @@ const App = () => {
 		try {
 			const res = await axios.get(`${config.API}/data`)
 			const data = res.data.data
-			if (res.data.data) {
-				return res.data.data
+			if (data) {
+				return data
 			} else {
 				throw new Error('Wrong')
 			}
 		} catch (error) {
 			throw error
 		}
-
+	}
+	const onNumberChange = (e) => {
+		setNumberData({ ...numberData, [e.target.id]: e.target.value })
+		
 	}
 
 	useEffect(() => {
 		getResult()
-	}, [operator])
+	}, [operator,numberData])
 	return (
 		<>
 			<div className="window">
 				<div className="input-section">
-					<label>A</label><input type="number" name="a" id="a" value={numberData.a} onChange={(e) => setNumberData({ ...numberData, a: e.target.value })} />
+					<label>A</label><input type="number" name="a" id="a" value={numberData.a} onChange={onNumberChange} />
 				</div>
 				<div className="input-section">
-					<label>B</label><input type="number" name="b" id="b" value={numberData.b} onChange={(e) => setNumberData({ ...numberData, b: e.target.value })} />
+					<label>B</label><input type="number" name="b" id="b" value={numberData.b} onChange={onNumberChange} />
 				</div>
 
 				<div className="operation">
@@ -155,10 +191,11 @@ const App = () => {
 					<label>Result</label><input id="result" value={ans.value} />
 				</div>
 				<div className="btn">
-					<label>Cloud Drive<input type="checkbox" id="cloud-drive" value={cloud} onChange={(e) => { console.log(e) }} /></label>
+					<label>Cloud Drive<input type="checkbox" id="cloud-drive" onChange={(e) => { setCloud(e.target.checked) }} /></label>
 				</div>
 				<div className="btn">
 					<button onClick={loadResult}>Load</button>
+					<input id="file-input" type="file" onChange={onUploadFile} hidden={true} ref={refFile} />
 					<button onClick={saveResult}>Save</button>
 				</div>
 			</div>

@@ -8,6 +8,7 @@
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "start": "electron-forge start",
+    "api": "node api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "make": "electron-forge make",
     "package": "electron-forge package"

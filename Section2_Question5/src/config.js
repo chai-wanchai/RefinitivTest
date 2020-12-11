@@ -1,4 +1,4 @@
 const config = {
-	API : 'http://localhost:4000'
+	API : process.env.API_URL || 'http://localhost:4000'
 }
 export default config

@@ -9,7 +9,6 @@ function createWindow () {
     }
   })
   win.loadFile(`${path.join(__dirname, './build/index.html')}`)
-  //win.loadURL('https://reseller-dev.nexterdigitals-dev.com/')
 }
 
 app.whenReady().then(createWindow)
