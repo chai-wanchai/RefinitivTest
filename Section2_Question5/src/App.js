@@ -1,8 +1,8 @@
 /* eslint no-eval: 0 */
+/* eslint-disable-next-line react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import config from './config'
-// eslint-disable-next-line 
 const App = () => {
 	const refFile = useRef(null)
 	const [numberData, setNumberData] = useState({
@@ -170,6 +170,7 @@ const App = () => {
 
 	useEffect(() => {
 		getResult()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [operator,numberData])
 	
 	return (
