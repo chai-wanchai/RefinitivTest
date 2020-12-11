@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
-//const electron = require('electron');
-// const path = require('path');
-// const fs = require('fs');
-// const dialog = electron.remote.dialog;
+import axios from 'axios'
+import config from './config'
 const App = () => {
-
 	const [numberData, setNumberData] = useState({
 		a: '',
 		b: ''
@@ -17,6 +14,7 @@ const App = () => {
 		eq: '',
 		value: ''
 	})
+	const [cloud, setCloud] = useState(false)
 	const click_operation = (e) => {
 		const { id } = e.target
 		const valueOps = operation(id)
@@ -29,23 +27,27 @@ const App = () => {
 	const operation = (id) => {
 		switch (id) {
 			case 'plus':
-				return '+'
-				break;
+				return '+';
+			case '+':
+				return 'plus';
 			case 'minus':
-				return '-'
-				break;
+				return '-';
+			case '-':
+				return 'minus';
 			case 'multiply':
-				return '*'
-				break;
+				return '*';
+			case '*':
+				return 'multiply'
 			case 'divide':
-				return '/'
-				break;
+				return '/';
+			case '/':
+				return 'divide'
 			case 'pow':
-				return '**'
-				break;
+				return '**';
+			case '**':
+				return 'pow'
 			default:
-				return ''
-				break;
+				return '';
 		}
 	}
 	const highlight = (opsId) => {
@@ -66,8 +68,6 @@ const App = () => {
 		const eq = `${numberData.a}${operator.value}${numberData.b}`
 		const answer = eval(eq)
 		setAns({ value: answer, eq: eq })
-
-
 	}
 	const saveResult = () => {
 		const result = {
@@ -77,36 +77,60 @@ const App = () => {
 			eq: ans.eq,
 			ans: ans.value
 		}
-		console.log(JSON.stringify(result))
-		// dialog.showSaveDialog({
-		// 	title: 'Select the File Path to save',
-		// 	defaultPath: path.join(__dirname, '../assets/sample.txt'),
-		// 	// defaultPath: path.join(__dirname, '../assets/'), 
-		// 	buttonLabel: 'Save',
-		// 	// Restricting the user to only Text Files. 
-		// 	filters: [
-		// 		{
-		// 			name: 'Text Files',
-		// 			extensions: ['txt', 'docx']
-		// 		},],
-		// 	properties: []
-		// }).then(file => {
-		// 	// Stating whether dialog operation was cancelled or not. 
-		// 	console.log(file.canceled);
-		// 	if (!file.canceled) {
-		// 		console.log(file.filePath.toString());
-
-		// 		// Creating and Writing to the sample.txt file 
-		// 		fs.writeFile(file.filePath.toString(),
-		// 			'This is a Sample File', function (err) {
-		// 				if (err) throw err;
-		// 				console.log('Saved!');
-		// 			});
-		// 	}
-		// }).catch(err => {
-		// 	console.log(err)
-		// });
+		toCloud(result)
+		getFromCloud()
 	}
+	const loadResult = async () => {
+		const data = await getFromCloud()
+		if ('a' in data && 'b' in data) {
+			setNumberData({
+				a: data.a,
+				b: data.b
+			})
+		}
+		if ('operator' in data) {
+			const opsId = operation(data.operator)
+			highlight(opsId)
+			setOperator({
+				id: opsId,
+				value: data.operator
+			})
+		}
+		if ('ans' in data && 'eq' in data) {
+			setAns({
+				eq: data.eq,
+				value: data.ans
+			})
+		}
+	}
+	const toCloud = async (data) => {
+		try {
+			const res = await axios.post(`${config.API}/save-data`, data)
+			if (res.data.data) {
+				return res.data.data
+			} else {
+				throw new Error('Wrong')
+			}
+		} catch (error) {
+			throw error
+		}
+
+	}
+	const getFromCloud = async () => {
+		try {
+			const res = await axios.get(`${config.API}/data`)
+			const data = res.data.data
+			if (res.data.data) {
+				return res.data.data
+			} else {
+				throw new Error('Wrong')
+			}
+		} catch (error) {
+			throw error
+		}
+
+	}
+
 	useEffect(() => {
 		getResult()
 	}, [operator])
@@ -131,7 +155,10 @@ const App = () => {
 					<label>Result</label><input id="result" value={ans.value} />
 				</div>
 				<div className="btn">
-					<button>Load</button>
+					<label>Cloud Drive<input type="checkbox" id="cloud-drive" value={cloud} onChange={(e) => { console.log(e) }} /></label>
+				</div>
+				<div className="btn">
+					<button onClick={loadResult}>Load</button>
 					<button onClick={saveResult}>Save</button>
 				</div>
 			</div>
