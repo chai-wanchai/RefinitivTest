@@ -1,3 +1,4 @@
+/* eslint no-eval: 0 */
 import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import config from './config'
@@ -170,6 +171,7 @@ const App = () => {
 	useEffect(() => {
 		getResult()
 	}, [operator,numberData])
+	
 	return (
 		<>
 			<div className="window">
