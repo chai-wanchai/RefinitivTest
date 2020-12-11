@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import config from './config'
+// eslint-disable-next-line 
 const App = () => {
 	const refFile = useRef(null)
 	const [numberData, setNumberData] = useState({
@@ -67,7 +68,7 @@ const App = () => {
 			return
 		}
 		const eq = `${numberData.a}${operator.value}${numberData.b}`
-		const answer = eval(eq)
+		const answer = window.eval(eq)
 		setAns({ value: answer, eq: eq })
 	}
 	const saveResult = async () => {
@@ -164,7 +165,6 @@ const App = () => {
 	}
 	const onNumberChange = (e) => {
 		setNumberData({ ...numberData, [e.target.id]: e.target.value })
-		
 	}
 
 	useEffect(() => {
@@ -188,7 +188,7 @@ const App = () => {
 					<button id="pow" onClick={click_operation}>Pow</button>
 				</div>
 				<div className="result">
-					<label>Result</label><input id="result" value={ans.value} />
+					<label>Result</label><input id="result" value={ans.value} readOnly={true}/>
 				</div>
 				<div className="btn">
 					<label>Cloud Drive<input type="checkbox" id="cloud-drive" onChange={(e) => { setCloud(e.target.checked) }} /></label>
