@@ -28,9 +28,7 @@ jobs:
         heroku_app_name: "refinative-test" #Must be unique in Heroku
         heroku_email: "wanchai.23.chai@gmail.com"
         procfile: "web: npm run api"
-    
-    - run: |
-        git remote add heroku https://heroku:${{secrets.HEROKU_API_KEY}}@git.heroku.com/refinative-test.git
+        appdir: "Section2_Question5"
     - run: npm install  
       working-directory: ./Section2_Question5
     - run: npm run build
