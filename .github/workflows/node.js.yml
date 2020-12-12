@@ -23,6 +23,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Deploy to Heroku
       uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
+      run: |
+        git remote add heroku https://heroku:${{secrets.HEROKU_API_KEY}}@git.heroku.com/refinative-test.git
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "refinative-test" #Must be unique in Heroku
