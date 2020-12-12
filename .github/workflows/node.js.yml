@@ -10,7 +10,7 @@ on:
     branches: [ master ]
 
 jobs:
-  Section2_Question5:
+  Section2_Question5_build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,7 +25,10 @@ jobs:
       working-directory: ./Section2_Question5
     - run: npm run build
       working-directory: ./Section2_Question5
-    
+  Section2_Question5_deploy: 
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v2
     - name: Deploy to Heroku
       uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
       with:
