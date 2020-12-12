@@ -21,7 +21,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
+    - name: Deploy to Heroku
+      uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
       with:
         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
         heroku_app_name: "refinative-test" #Must be unique in Heroku
