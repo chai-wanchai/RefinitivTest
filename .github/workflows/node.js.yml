@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   Section2_Question5_build:
@@ -16,24 +16,26 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install  
-      working-directory: ./Section2_Question5
-    - run: npm run build
-      working-directory: ./Section2_Question5
-  Section2_Question5_deploy: 
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+        working-directory: ./Section2_Question5
+      - run: npm run build
+        working-directory: ./Section2_Question5
+
+  Section2_Question5_deploy:
     runs-on: ubuntu-latest
-    steps: 
-    - uses: actions/checkout@v2
-    - name: Deploy to Heroku
-      uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
-      with:
-        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-        heroku_app_name: "refinative-test" #Must be unique in Heroku
-        heroku_email: "wanchai.23.chai@gmail.com"
-        procfile: "web: npm run api"
-        appdir: "Section2_Question5"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.7.8 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "refinative-test" #Must be unique in Heroku
+          heroku_email: "wanchai.23.chai@gmail.com"
+          procfile: "web: npm run api"
+          appdir: "Section2_Question5"
+    needs: Section2_Question5_build
