@@ -1,4 +1,4 @@
 const config = {
-	API : process.env.API_URL || 'http://localhost:4000'
+	API : 'https://refinative-test.herokuapp.com'
 }
 export default config
